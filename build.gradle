@@ -1,0 +1,91 @@
+plugins {
+    id "com.github.c64lib.retro-assembler" version "1.5.2"
+}
+
+retroProject {
+    dialect = "KickAssembler"
+    dialectVersion = "5.24"
+}
+
+preprocess {
+    charpad {
+        input = file("backdrops.ctm")
+        outputs {
+            meta {
+                dialect = "KickAssembler"
+                output = file("metadata.asm")
+            }
+            charset {
+                output = file("charset.bin")
+            }
+            charsetColours {
+                output = file("colours.bin")
+            }
+            map {
+                left = 0
+                right = 40
+                bottom = 25
+                interleaver {
+                    output = file("title.bin")
+                }
+                interleaver {
+                }
+            }
+            map {
+                left = 40
+                right = 51
+                bottom = 25
+                interleaver {
+                    output = file("dashboard.bin")
+                }
+                interleaver {
+                }
+            }
+            map {
+                top = 25
+                left = 0
+                right = 29
+                interleaver {
+                    output = file("level1.bin")
+                }
+                interleaver {
+                }
+            }
+            map {
+                top = 25
+                left = 29
+                right = 58
+                interleaver {
+                    output = file("level2.bin")
+                }
+                interleaver {
+                }
+            }
+            map {
+                top = 25
+                left = 58
+                right = 87
+                interleaver {
+                    output = file("level3.bin")
+                }
+                interleaver {
+                }
+            }
+        }
+    }
+    spritepad {
+        input = file("sprites.spd")
+        outputs {
+            sprites {
+                start = 0
+                end = 3
+                output = file("player.bin")
+            }
+            sprites {
+                start = 3
+                end = 4
+                output = file("survivor.bin")
+            }
+        }
+    }
+}
