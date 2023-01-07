@@ -3,7 +3,7 @@ version: 2
 jobs:
         build:
           docker:
-            - image: maciejmalecki/c64libci:0.1.6
+            - image: maciejmalecki/c64libci:0.1.7
 
           working_directory: ~/repo
 
@@ -17,7 +17,7 @@ jobs:
                 at: ./artifacts
             - run: mkdir out
             - run: mkdir work
-            - run: ./gradlew build --stacktrace
+            - run: ./gradlew licenseAsm build --stacktrace
             - run: cp *.prg work/
             - persist-to-workspace:
                 root: .
