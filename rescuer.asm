@@ -34,10 +34,10 @@
 .label SHAPES_COUNT = 4
 .label PLAYER_SPRITE = 0
 // physics & controls
-.label ANIMATION_DELAY_MAX = 10
-.label GRAVITY_ACCELERATION = 5
-.label UP_ACCELERATION = 5
-.label VERTICAL_ACCELERATION = 5
+.label ANIMATION_DELAY_MAX = 5
+.label GRAVITY_ACCELERATION = 1
+.label UP_ACCELERATION = 3
+.label VERTICAL_ACCELERATION = 7
 // game initials
 .label LIVES = 5
 .label START_LEVEL = 1
@@ -303,13 +303,12 @@ joyLeft:
         and #(PLAYER_RIGHT ^ $FF)
         sta playerState
         setWord(hAcceleration, 0) // stop accelerating
-        setWord(hSpeed, 0) // change direction, zero the speed
         jmp checkUp
 !:
     lda playerState
     ora #PLAYER_LEFT
     sta playerState
-    setWord(hAcceleration, VERTICAL_ACCELERATION) // joy left, accelerate
+    setWord(hAcceleration, -VERTICAL_ACCELERATION) // joy left, accelerate
     jmp checkUp
 joyRight:
     lda playerState
@@ -320,7 +319,6 @@ joyRight:
         and #(PLAYER_LEFT ^ $FF)
         sta playerState
         setWord(hAcceleration, 0) // stop accelerating
-        setWord(hSpeed, 0) // change direction, zero the speed
         jmp checkUp
 !:
     lda playerState
@@ -340,7 +338,6 @@ checkUp:
         and #(PLAYER_UP ^ $FF)
         sta playerState
         setWord(vAcceleration, 0) // no up, stop up movement
-        setWord(vSpeed, 0)
 !:
     setWord(vAcceleration, GRAVITY_ACCELERATION) // let the gravity work
     rts
@@ -351,43 +348,16 @@ joyUp:
         lda playerState
         ora #PLAYER_UP
         sta playerState
-        setWord(vAcceleration, UP_ACCELERATION) // accelerate upwards
-        setWord(vSpeed, 0)
+        setWord(vAcceleration, -UP_ACCELERATION) // accelerate upwards
 !:
     rts
 }
 
 updatePlayerPosition: {
-    // vertical
-    lda playerState
-    and #PLAYER_LEFT
-    beq !+
-        jsr adcHAcceleration
-        sbcWord(hPosition, hSpeed, hPosition)
-        jmp vertical
-!:
-    lda playerState
-    and #PLAYER_RIGHT
-    beq !+
-        jsr adcHAcceleration
-        adcWord(hSpeed, hPosition, hPosition)
-!:
-vertical:
-    lda playerState
-    and #PLAYER_UP
-    beq !+
-        jsr adcVAcceleration
-        sbcWord(vPosition, vSpeed, vPosition)
-        rts
-!:
-        jsr adcVAcceleration
-        adcWord(vPosition, vSpeed, vPosition)
-    rts
-adcHAcceleration:
     adcWord(hAcceleration, hSpeed, hSpeed)
-    rts
-adcVAcceleration:
+    adcWord(hSpeed, hPosition, hPosition)
     adcWord(vAcceleration, vSpeed, vSpeed)
+    adcWord(vSpeed, vPosition, vPosition)
     rts
 }
 
